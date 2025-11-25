@@ -1,12 +1,12 @@
 # MedScope AI
 
-**Decentralized Medical Claim Intelligence Layer**
+**Medical Intelligence Platform for Evidence-Based Claim Evaluation**
 
-MedScope AI is an autonomous agent + DKG knowledge system that evaluates medical claims, creates structured medical intelligence, and publishes verifiable knowledge assets. It is inspired by the same problems OriginTrail cares about (misinformation, health transparency, trustworthy data), but the design is 100% original.
+MedScope AI provides a comprehensive medical claim evaluation system that leverages decentralized knowledge graphs to deliver evidence-based medical intelligence. The platform analyzes medical claims through a structured pipeline that assesses risk, aligns evidence from authoritative sources, and generates verifiable medical explanations.
 
-## 🎯 What It Does
+## Overview
 
-MedScope AI provides a four-stage medical reasoning pipeline:
+MedScope AI implements a systematic approach to medical claim evaluation through four core stages:
 
 1. **CLAIM** - User enters a medical claim (e.g., "Ivermectin cures COVID-19", "Ozempic causes cancer")
 2. **RISK** - System detects risk level (low/medium/high) and adjusts scrutiny accordingly
@@ -15,9 +15,9 @@ MedScope AI provides a four-stage medical reasoning pipeline:
 
 The system publishes structured medical intelligence as Knowledge Assets on OriginTrail DKG, creating a verifiable, tamper-proof archive of medical explanations that AI agents can query via MCP.
 
-## 🏗️ Architecture
+## System Architecture
 
-MedScope AI follows the three-layer architecture required by the hackathon:
+The platform is built on a three-tier architecture that aligns with the hackathon requirements:
 
 ### 1. Agent Layer
 - **MCP Tools**: AI agents can query medical evidence and explanations via Model Context Protocol

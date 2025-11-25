@@ -4,14 +4,24 @@ LLM Client for enhanced claim analysis
 import os
 from typing import Optional
 
-import openai
-from openai import AsyncOpenAI
+try:
+    import openai
+    from openai import AsyncOpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    AsyncOpenAI = None
 
 
 class LLMClient:
     """Client for LLM-based analysis (optional enhancement)"""
 
     def __init__(self, api_key: Optional[str] = None):
+        if not OPENAI_AVAILABLE:
+            self.client = None
+            self.enabled = False
+            return
+            
         api_key = api_key or os.getenv("OPENAI_API_KEY")
         if api_key:
             self.client = AsyncOpenAI(api_key=api_key)

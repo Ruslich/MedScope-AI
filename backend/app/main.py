@@ -2,10 +2,19 @@
 MedScope AI Backend - FastAPI Application
 """
 import hashlib
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 from app.models import (
     ClaimEvaluationRequest,
@@ -37,13 +46,17 @@ async def lifespan(app: FastAPI):
     import os
 
     dkg_base_url = os.getenv("DKG_BASE_URL", "http://localhost:9200")
+    logger.info(f"Initializing DKG client with base URL: {dkg_base_url}")
     dkg_client = DKGClient(base_url=dkg_base_url)
+    logger.info("DKG client initialized successfully")
 
     yield
 
     # Cleanup
+    logger.info("Shutting down services...")
     await evidence_engine.close()
     await dkg_client.close()
+    logger.info("Services shut down complete")
 
 
 app = FastAPI(
@@ -119,13 +132,43 @@ async def publish_explanation(request: PublishExplanationRequest):
     
     This endpoint publishes the explanation as a Knowledge Asset on OriginTrail DKG.
     """
+    logger.info("=" * 60)
+    logger.info("=== PUBLISH EXPLANATION REQUEST ===")
+    logger.info("=" * 60)
+    logger.info(f"Claim ID: {request.claimId}")
+    logger.info(f"Claim: {request.claim}")
+    logger.info(f"Risk Level: {request.riskLevel}")
+    logger.info(f"Has metadata: {request.metadata is not None}")
+    if request.metadata:
+        logger.info(f"Metadata: {request.metadata.model_dump()}")
+    logger.info(f"Evidence count: {len(request.evidence)}")
+    logger.info(f"Explanation confidence: {request.explanation.confidence}")
+    
     if not dkg_client:
+        logger.error("DKG client not initialized")
         raise HTTPException(status_code=500, detail="DKG client not initialized")
 
     try:
+        logger.info(f"Calling DKG client to publish explanation for claim: {request.claimId}")
         response = await dkg_client.publish_explanation(request)
+        logger.info("=" * 60)
+        logger.info("=== DKG CLIENT RESPONSE ===")
+        logger.info(f"Success: {response.success}")
+        logger.info(f"UAL: {response.ual}")
+        logger.info(f"Message: {response.message}")
+        logger.info("=" * 60)
+        
+        if not response.success:
+            logger.error(f"Publishing failed: {response.message}")
+        
         return response
     except Exception as e:
+        logger.error("=" * 60)
+        logger.error("=== EXCEPTION DURING PUBLISHING ===")
+        logger.error(f"Exception type: {type(e).__name__}")
+        logger.error(f"Exception message: {str(e)}")
+        logger.exception("Full exception traceback:")
+        logger.error("=" * 60)
         raise HTTPException(status_code=500, detail=f"Error publishing explanation: {str(e)}")
 
 

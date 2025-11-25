@@ -1,18 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  body {
+    background: linear-gradient(to bottom right, #f0fdfa 0%, #ffffff 50%, #f0f9ff 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1f2937;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer components {
+  .card-medical {
+    @apply bg-white rounded-xl border;
+    box-shadow: 0 4px 6px -1px rgba(20, 184, 166, 0.1), 0 2px 4px -1px rgba(20, 184, 166, 0.06);
+    border-color: #ccfbf1;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(to right, #14b8a6, #0d9488);
+    @apply text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200;
+    box-shadow: 0 4px 6px -1px rgba(20, 184, 166, 0.1), 0 2px 4px -1px rgba(20, 184, 166, 0.06);
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(to right, #0d9488, #0f766e);
+    box-shadow: 0 10px 15px -3px rgba(20, 184, 166, 0.1), 0 4px 6px -2px rgba(20, 184, 166, 0.05);
+  }
+  
+  .btn-secondary {
+    @apply bg-white font-semibold py-2.5 px-6 rounded-lg border-2 transition-all duration-200;
+    color: #0f766e;
+    border-color: #5eead4;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #f0fdfa;
+    border-color: #2dd4bf;
+  }
+  
+  .badge-risk-high {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .badge-risk-medium {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .badge-risk-low {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
 }
-
