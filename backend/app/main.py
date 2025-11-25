@@ -31,9 +31,9 @@ from app.services.llm_client import LLMClient
 
 # Initialize services
 claim_engine = ClaimUnderstandingEngine()
-evidence_engine = EvidenceEngine()
-explanation_generator = ExplanationGenerator()
 llm_client = LLMClient()
+evidence_engine = EvidenceEngine(llm_client=llm_client)  # Pass LLM client to evidence engine
+explanation_generator = ExplanationGenerator()
 
 # DKG client will be initialized with environment variable
 dkg_client: DKGClient = None
@@ -96,7 +96,7 @@ async def evaluate_claim(request: ClaimEvaluationRequest):
         # Step 1: Understand the claim
         metadata, risk_level = claim_engine.understand_claim(request.claim)
 
-        # Step 2: Fetch evidence
+        # Step 2: Fetch evidence (now enhanced with OpenAI and real APIs)
         evidence = await evidence_engine.fetch_evidence(
             request.claim,
             compound=metadata.compound,
@@ -108,6 +108,25 @@ async def evaluate_claim(request: ClaimEvaluationRequest):
         explanation = explanation_generator.generate_explanation(
             request.claim, evidence, risk_level
         )
+
+        # Step 4: Enhance explanation with OpenAI if available
+        if llm_client and llm_client.enabled:
+            try:
+                evidence_summary = "; ".join([e.summary[:100] for e in evidence[:3]])
+                enhanced = await llm_client.enhance_explanation(
+                    request.claim,
+                    evidence_summary,
+                    risk_level.value
+                )
+                
+                if enhanced:
+                    # Merge enhanced explanations
+                    if enhanced.get("enhanced_patient_explanation"):
+                        explanation.patientFriendly = enhanced["enhanced_patient_explanation"]
+                    if enhanced.get("enhanced_clinician_summary"):
+                        explanation.clinicianSummary = enhanced["enhanced_clinician_summary"]
+            except Exception as e:
+                logger.warning(f"Failed to enhance explanation with OpenAI: {e}")
 
         # Generate unique claim ID
         claim_id = hashlib.sha256(request.claim.encode()).hexdigest()[:16]
