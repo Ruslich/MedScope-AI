@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   evaluateClaim,
   publishExplanation,
   ClaimEvaluationResponse,
   PublishExplanationRequest,
 } from '../services/api';
-import { ExternalLink, CheckCircle2, Loader2, AlertCircle, Shield, Activity, Database, Sparkles } from 'lucide-react';
+import { ExternalLink, CheckCircle2, Loader2, AlertCircle, Shield, Activity, Database, Sparkles, List } from 'lucide-react';
 
 interface EvaluationState {
   loading: boolean;
@@ -17,6 +18,7 @@ interface EvaluationState {
 }
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [claim, setClaim] = useState('');
   const [evaluation, setEvaluation] = useState<EvaluationState>({
     loading: false,
@@ -148,9 +150,18 @@ const LandingPage = () => {
                 <p className="text-xs text-gray-400 font-mono">NEURAL MEDICAL INTELLIGENCE</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
-              <Database className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-mono text-cyan-300">ORIGINTRAIL DKG</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/published')}
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-500/50 rounded-lg transition-all"
+              >
+                <List className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs font-mono text-cyan-300 uppercase">Published Claims</span>
+              </button>
+              <div className="flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+                <Database className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs font-mono text-cyan-300">ORIGINTRAIL DKG</span>
+              </div>
             </div>
           </div>
         </div>

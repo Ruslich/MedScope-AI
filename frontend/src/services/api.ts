@@ -1,9 +1,17 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const DKG_URL = import.meta.env.VITE_DKG_URL || 'http://localhost:9200';
 
 const api = axios.create({
   baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+const dkgApi = axios.create({
+  baseURL: DKG_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -85,6 +93,22 @@ export interface PublishExplanationResponse {
   message: string;
 }
 
+export interface PublishedExplanation {
+  '@id': string;
+  ual: string | null;
+  claim: string;
+  claimId: string;
+  riskLevel: string;
+  publishedAt: string;
+}
+
+export interface PublishedExplanationsResponse {
+  found: number;
+  total: number;
+  explanations: PublishedExplanation[];
+  error?: string;
+}
+
 export const evaluateClaim = async (
   request: ClaimEvaluationRequest
 ): Promise<ClaimEvaluationResponse> => {
@@ -110,5 +134,24 @@ export const getExplanation = async (claimId: string) => {
   return response.data;
 };
 
-export default api;
+export const getPublishedExplanations = async (
+  limit: number = 50,
+  offset: number = 0,
+  riskLevel?: string,
+  keyword?: string
+): Promise<PublishedExplanationsResponse> => {
+  const params: any = { 
+    limit: Number(limit), 
+    offset: Number(offset) 
+  };
+  if (riskLevel) params.riskLevel = riskLevel;
+  if (keyword) params.keyword = keyword;
+  
+  const response = await dkgApi.get<PublishedExplanationsResponse>(
+    '/medscope/explanations',
+    { params }
+  );
+  return response.data;
+};
 
+export default api;
